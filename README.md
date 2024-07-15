@@ -39,12 +39,12 @@ Zdefiniowanie stałych, które określają numery pinów mikrokontrolera, pod kt
 ```
 ## Krok 3
 Utworzenie sześciu obiektów: 
-o	mySerial - obiekt klasy SoftwareSerial do komunikacji przez port szeregowy UART przez piny 39 i 37,
-o	mfrc522 - obiekt klasy MFRC522 do komunikacji z modułem czytnika kart RFID
-o	myServo - obiekt klasy Servo obsługi serwomechanizmu,
-o	lcd1 - obiekt klasy LiquidCrystal_I2C do obsługi wyświetlacza LCD z interfejsem I2C o adresie 0x27, o szerokości 20 znaków i 4 wierszach,
-o	lcd2 - obiekt klasy LiquidCrystal_I2C do obsługi wyświetlacza LCD z interfejsem I2C o adresie 0x26, o szerokości 16 znaków i 2 wierszach,
-o	dht - obiekt klasy DHT do obsługi czujnika temperatury i wilgotności DHT.
+*	mySerial - obiekt klasy SoftwareSerial do komunikacji przez port szeregowy UART przez piny 39 i 37,
+*	mfrc522 - obiekt klasy MFRC522 do komunikacji z modułem czytnika kart RFID
+*	myServo - obiekt klasy Servo obsługi serwomechanizmu,
+*	lcd1 - obiekt klasy LiquidCrystal_I2C do obsługi wyświetlacza LCD z interfejsem I2C o adresie 0x27, o szerokości 20 znaków i 4 wierszach,
+*	lcd2 - obiekt klasy LiquidCrystal_I2C do obsługi wyświetlacza LCD z interfejsem I2C o adresie 0x26, o szerokości 16 znaków i 2 wierszach,
+*	dht - obiekt klasy DHT do obsługi czujnika temperatury i wilgotności DHT.
 ```
 SoftwareSerial mySerial(39,37);      //Tx & Rx
 LiquidCrystal_I2C lcd1(0x27, 20, 4);
@@ -141,10 +141,10 @@ int ileCzasuMinelo = 0;
 ```
 ## Krok 10
 Zdefiniowanie funkcji ,,setup()”. Funkcja zawiera:
-o	ustawienia na zegarze RTC  (Real-Time Clock), który został zainicjowany wcześniej jako obiekt „myRTC”, dane są przedstawione zgodnie z podanymi argumentami (sekundy/minuty/godzina/dzień/dzień/miesiąc/rok),
-o	ustawienia trybu pracy dla pinów cyfrowych w mikrokontrolerze jako wejścia bądź wyjścia,
-o	ustawione są także początkowe stany poszczególnych pinów,
-o	inicjowane są również dwa wyświetlacze LCD, a także moduł RFID oraz serwomechanizm.
+*	ustawienia na zegarze RTC  (Real-Time Clock), który został zainicjowany wcześniej jako obiekt „myRTC”, dane są przedstawione zgodnie z podanymi argumentami (sekundy/minuty/godzina/dzień/dzień/miesiąc/rok),
+*	ustawienia trybu pracy dla pinów cyfrowych w mikrokontrolerze jako wejścia bądź wyjścia,
+*	ustawione są także początkowe stany poszczególnych pinów,
+*	inicjowane są również dwa wyświetlacze LCD, a także moduł RFID oraz serwomechanizm.
 ```
 void setup() {
   Wire.begin();
@@ -247,12 +247,12 @@ long TP_init(){
 ```
 ## Krok 13
 Zdefiniowanie funkcji ,, displayTime()” odnoszącej się do działa modułu czasu rzeczywistego. Krok po kroku, działanie funkcji wygląda następująco:
-o	Funkcja ,,updateTime” obiektu ,,myRTC” działa wykorzystuje do aktualizacji informacji o dacie i czasie pobranych ze źródła zegara RTC,
-o	Ustawiany jest kursor na pierwszą kolumnę dodatkowego wiersza ekranu LCD.
-o	Na ekranie wyświetlacza jest informacja ,,Data:” oraz dzień, miesiąc i rok pobrane z obiektu ,,myRTC”.
-o	Ustawiany jest kursor na pierwszą kolumnę drugiego wiersza ekranu LCD.
-o	Godzina, minuta i sekunda są pobierane z obiektu ,,myRTC” i sformatowane do postaci 00:00:00. Wynik jest zapisywany we wszystkich znakach o nazwie ,,timeChar”,
-o	Na wyświetlaczu wyświetlana jest informacja ,,Czas:” oraz sformatowana godzina, minuta i sekunda, a następnie wprowadzono ,,timeChar”.
+*	Funkcja ,,updateTime” obiektu ,,myRTC” działa wykorzystuje do aktualizacji informacji o dacie i czasie pobranych ze źródła zegara RTC,
+*	Ustawiany jest kursor na pierwszą kolumnę dodatkowego wiersza ekranu LCD.
+*	Na ekranie wyświetlacza jest informacja ,,Data:” oraz dzień, miesiąc i rok pobrane z obiektu ,,myRTC”.
+*	Ustawiany jest kursor na pierwszą kolumnę drugiego wiersza ekranu LCD.
+*	Godzina, minuta i sekunda są pobierane z obiektu ,,myRTC” i sformatowane do postaci 00:00:00. Wynik jest zapisywany we wszystkich znakach o nazwie ,,timeChar”,
+*	Na wyświetlaczu wyświetlana jest informacja ,,Czas:” oraz sformatowana godzina, minuta i sekunda, a następnie wprowadzono ,,timeChar”.
 ```
 void displayTime() {
    myRTC.updateTime();
@@ -419,12 +419,12 @@ w pomieszczeniu i alarm natychmiast się uruchamia.
 ## Krok 19
 Jeśli zmienna ,,stanAlarm” ma wartość 6, to znaczy, że alarm w strefie 3 jest uzbrojony 
 i oczekuje na rozbrojenie (Rys. 46.). Opis działania kodu:
-o	inicjalizowany jest czujnik temperatury i wilgotności (wywoływana jest funkcja ,,TP_init” oraz ,,dht.begin”),
-o	odczytywana jest aktualna temperatura za pomocą raportu DHT (zapisywana 
+*	inicjalizowany jest czujnik temperatury i wilgotności (wywoływana jest funkcja ,,TP_init” oraz ,,dht.begin”),
+*	odczytywana jest aktualna temperatura za pomocą raportu DHT (zapisywana 
 w wyniku t),
-o	sprawdzany jest stan logiczny pinu dotyczącego zalania. Jeśli jest wysoki na (HIGH), oznacza to, że wystąpiło zalanie i alarm zostaje natychmiast uruchomiony (stanAlarm ustawiony na 4),
-o	następnie sprawdzana jest aktualna temperatura, jeśli wartość temperatury jest większa niż 1000, oznacza to, że utrzymuje się bardzo wysoka temperatura i alarm zostaje natychmiast uruchomiony (stanAlarm ustawiony na 4),
-o	kolejno sprawdzana jest aktualna temperatura (odczytana za pomocą czujnika DHT). Jeśli jest ona większa niż 30 stopni, oznacza to, że jest bardzo wysoka temperatura i alarm zostają natychmiast uruchomiony (stanAlarm ustawiony na 4).
+*	sprawdzany jest stan logiczny pinu dotyczącego zalania. Jeśli jest wysoki na (HIGH), oznacza to, że wystąpiło zalanie i alarm zostaje natychmiast uruchomiony (stanAlarm ustawiony na 4),
+*	następnie sprawdzana jest aktualna temperatura, jeśli wartość temperatury jest większa niż 1000, oznacza to, że utrzymuje się bardzo wysoka temperatura i alarm zostaje natychmiast uruchomiony (stanAlarm ustawiony na 4),
+*	kolejno sprawdzana jest aktualna temperatura (odczytana za pomocą czujnika DHT). Jeśli jest ona większa niż 30 stopni, oznacza to, że jest bardzo wysoka temperatura i alarm zostają natychmiast uruchomiony (stanAlarm ustawiony na 4).
 ```
     case 6:
       //STREFA 3
