@@ -331,8 +331,11 @@ void loop() {
       }
         
     break;
-    ```
-
+```
+## Krok 15
+Jeśli zmienna ,,stanAlarm” ma wartość 2, to znaczy, że alarm w strefie 1 jest uzbrojony 
+i oczekuje na rozbrojenie. W takiej sytuacji sprawdzane są stany logiczne pinów połączonych z czujnikiem ruchu w kuchni lub kontaktronów. Jeśli stan na któryś z tych pinów jest wysoki (HIGH), oznacza to, że wystąpił ruch w pomieszczeniu i alarm zostaje natychmiast uruchomiony (stanAlarm ustawiony na 4) 
+```
     case 2:
       //STREFA 1
       
@@ -345,7 +348,10 @@ void loop() {
         stanAlarmu = 4; //Natychmiast uruchamiamy alarm
    }    
     break;
-    
+```
+## Krok 16
+Jeśli zmienna ,,stanAlarm” ma wartość 3, to znaczy, że alarm jest uruchomiony i jest możliwość rozbrojenia systemu poprzez wprowadzenie kodu PIN. W takiej sytuacji wczytywany jest zapisany kod. Następnie sprawdzane są kolejne cyfry kodu PIN, czy są zgodne. Jeśli tak, to ,,pinAlarm” pozycja zwiększa się o 1 i sprawdzana jest następna cyfra. Jeśli wszystkie 4 cyfry są równe, alarm jest rozbrojony (stanAlarm ustawiony na 1). Zaś w przypadku, gdy kod nie jest zgodny alarm jest wciąż uruchomiony (stanAlarm ustawiony na 4).
+```
     case 3:
       //Rozbrajanie
       klawisz = klawiatura.getKey();
@@ -369,7 +375,10 @@ void loop() {
       }
       
     break;
-    
+ ```
+## Krok 17
+Jeśli zmienna stanAlarm ma wartość 4, to znaczy, że alarm jest uruchomiony i jest włączona sygnalizacja alarmu. W takiej sytuacji uruchamiany jest buzzer oraz dioda LED informująca o stanie alarmu. W tym samym czasie na wyświetlaczu LCD pojawia się napis "uzbrojony" i "intruz". Alarm przechodzi do stanu 3 (oczekuje na wprowadzenie kodu PIN). W tym samym czasie wysyłany jest SMS z informacją o alarmie.
+```
     case 4:
       //Sygnalizacja alarmu
        
@@ -386,7 +395,12 @@ void loop() {
       delay(100);
       
     break;
-    
+ ```
+## Krok 18
+Jeśli zmienna ,,stanAlarm” ma wartość 5, to znaczy, że alarm w strefie 2 jest uzbrojony 
+i oczekuje na rozbrojenie. W takiej sytuacji sprawdzane są stany logiczne pinów połączonych z czujnikiem ruchu w sypialni, kuchni oraz korytarzu. Jeśli stan na którymkolwiek z tych pinów jest wysoki (HIGH), oznacza to, że wystąpił ruch 
+w pomieszczeniu i alarm natychmiast się uruchamia.
+```
      case 5:
       //STREFA 2
       
@@ -400,7 +414,18 @@ void loop() {
       } 
       
       
-    break; 
+    break;
+```
+## Krok 19
+Jeśli zmienna ,,stanAlarm” ma wartość 6, to znaczy, że alarm w strefie 3 jest uzbrojony 
+i oczekuje na rozbrojenie (Rys. 46.). Opis działania kodu:
+o	inicjalizowany jest czujnik temperatury i wilgotności (wywoływana jest funkcja ,,TP_init” oraz ,,dht.begin”),
+o	odczytywana jest aktualna temperatura za pomocą raportu DHT (zapisywana 
+w wyniku t),
+o	sprawdzany jest stan logiczny pinu dotyczącego zalania. Jeśli jest wysoki na (HIGH), oznacza to, że wystąpiło zalanie i alarm zostaje natychmiast uruchomiony (stanAlarm ustawiony na 4),
+o	następnie sprawdzana jest aktualna temperatura, jeśli wartość temperatury jest większa niż 1000, oznacza to, że utrzymuje się bardzo wysoka temperatura i alarm zostaje natychmiast uruchomiony (stanAlarm ustawiony na 4),
+o	kolejno sprawdzana jest aktualna temperatura (odczytana za pomocą czujnika DHT). Jeśli jest ona większa niż 30 stopni, oznacza to, że jest bardzo wysoka temperatura i alarm zostają natychmiast uruchomiony (stanAlarm ustawiony na 4).
+```
     case 6:
       //STREFA 3
       
@@ -423,3 +448,4 @@ void loop() {
     break;  
 }
 }
+```
