@@ -2,7 +2,7 @@
 Krok po kroku kod działania Systemu Sygnalizacji Włamania i Napadu
 ## Krok 1 
 wczytanie bibliotek pomocniczych do działania programu 
-
+```
 #include <Keypad.h>                  //biblioteka od klawiatury
 #include <LiquidCrystal_I2C.h>       // biblioteka wyświetlacza
 #include "DHT.h"                      //biblioteka moduły DHT
@@ -11,7 +11,7 @@ wczytanie bibliotek pomocniczych do działania programu
 #include <SPI.h>                                         
 #include <MFRC522.h>                    // biblioteka czytnika RFID 
 #include <Servo.h>                      // Servo
-
+```
 
 
 #define SS_PIN 53              // pin internetowy modułu czytnika RFID                        
