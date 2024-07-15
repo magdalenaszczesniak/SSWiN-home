@@ -5,10 +5,9 @@ Opracowany projekt Systemu Sygnalizacji Włamania i Napadu z założenia zabezpi
 Tabela przedstawiająca kosztorys systemu
 ![Lp_page-0001](https://github.com/user-attachments/assets/22013338-29cb-4d57-a038-fc94b7285323)
 
-
 Krok po kroku kod działania Systemu Sygnalizacji Włamania i Napadu
 ## Krok 1 
-wczytanie bibliotek pomocniczych do działania programu 
+Wczytanie bibliotek pomocniczych do działania programu 
 ```
 #include <Keypad.h>                  //biblioteka od klawiatury
 #include <LiquidCrystal_I2C.h>       // biblioteka wyświetlacza
@@ -19,11 +18,11 @@ wczytanie bibliotek pomocniczych do działania programu
 #include <MFRC522.h>                    // biblioteka czytnika RFID 
 #include <Servo.h>                      // Servo
 ```
-
-
+## Krok 2 
+Zdefiniowanie stałych, które określają numery pinów mikrokontrolera, pod które są podłączone poszczególne elementy systemu takie jak moduł czytnika kart RFID, czujnik dymu, czujnik temperatury i wilgotności, buzzer, kontaktron nr 1, kontaktron nr 2, czujnik ruchu w kuchni, czujnik ruchu w sypialni czujnik ruchu w łazience, czujnik ruchu w korytarzu, czujka temperatury, czujka zalania, czujka wibracji oraz LED uzbrojenia i alarmu. 
+```
 #define SS_PIN 53              // pin internetowy modułu czytnika RFID                        
-#define RST_PIN 46             // pin komunikacyjny modułu czytnika RFID                        
-#define smokeA0 29             // czujka dym
+#define RST_PIN 46             // pin komunikacyjny modułu czytnika RFID                       #define smokeA0 29             // czujka dym
 #define DHTTYPE DHT11         // typ czujnika  (DHT11)
 #define BUZZER 36
 #define KONTAKTRON_1 32
@@ -37,15 +36,27 @@ wczytanie bibliotek pomocniczych do działania programu
 #define CZUJKA_WIBRACJI 35
 #define LED_UZBROJENIE 24
 #define LED_ALARM 22
-
+```
+## Krok 3
+Utworzenie sześciu obiektów: 
+o	mySerial - obiekt klasy SoftwareSerial do komunikacji przez port szeregowy UART przez piny 39 i 37,
+o	mfrc522 - obiekt klasy MFRC522 do komunikacji z modułem czytnika kart RFID
+o	myServo - obiekt klasy Servo obsługi serwomechanizmu,
+o	lcd1 - obiekt klasy LiquidCrystal_I2C do obsługi wyświetlacza LCD z interfejsem I2C o adresie 0x27, o szerokości 20 znaków i 4 wierszach,
+o	lcd2 - obiekt klasy LiquidCrystal_I2C do obsługi wyświetlacza LCD z interfejsem I2C o adresie 0x26, o szerokości 16 znaków i 2 wierszach,
+o	dht - obiekt klasy DHT do obsługi czujnika temperatury i wilgotności DHT.
+```
 SoftwareSerial mySerial(39,37);      //Tx & Rx
 LiquidCrystal_I2C lcd1(0x27, 20, 4);
 LiquidCrystal_I2C lcd2(0x26, 16,2);
 MFRC522 mfrc522(SS_PIN, RST_PIN);   
 Servo myServo;                          //  servo nazwa
 DHT dht(CZUJKA_TEMPERATURY, DHTTYPE);     // definicja czujnika
+```
+## Krok 4
+Zdefiniowanie funkcji ,,wyslijsms ()”, która będzie realizować wykonanie powiadomienia SMS-a.
 
-///////////////moduł GSM ////////////
+```
 void wyslijsms(){
 
    mySerial.begin(9600);
@@ -61,7 +72,11 @@ void wyslijsms(){
   updateSerial();
   mySerial.write(26);
 }
+```
+## Krok 5
+Zdefiniowanie funkcji „updateSerial ()”, która będzie realizować przesyłanie danych między portem szeregowym mikrokontrolera a portem szeregowym software.
 
+```
 void updateSerial()
 {
   delay(500);
@@ -75,10 +90,11 @@ void updateSerial()
 
   }
 }
+```
+## Krok 6
+Zdefiniowanie funkcji ,,dateTimeWrite ()”, która służy do inicjalizacji wyświetlacza lcd1 i wyświetlenia na nim aktualnej daty i godziny.
 
-
-////////////moduł_czasu_rzeczywistego//// 
-
+```
 // CLK -> 43 , DAT -> 45, Reset -> 47
 virtuabotixRTC myRTC(43, 45, 47); 
 char timeChar[8];
@@ -86,23 +102,34 @@ void dateTimeWrite() {
   lcd1.init();                      // inicjalizowanie LCD
   lcd1.backlight(); 
 }
-//////////////////////////////////////////
+```
+## Krok 7
+Zdefiniowanie stałych ,,ROWS” i ,,COLS”, określających ilość wierszy 
+i kolumn klawiatury oraz tablic ,,rowPins” i ,,colPins”, określających numery pinów mikrokontrolera, pod które są podłączone wiersze i kolumny klawiatury.
 
+```
 const byte ROWS = 4;                  // ile wierszy
 const byte COLS = 4;                  //ile kolumn
  
 byte rowPins[ROWS] = {5, 4, 3, 2};     //piny wierszy
 byte colPins[COLS] = {6, 7, 8, 9};    //piny kolumn
- 
+```
+## Krok 8
+Zdefiniowanie tablicy ,,keys”, określającej mapowanie klawiatury oraz obiektu typu Keypad o nazwie ,,keypad”, który będzie służył do obsługi klawiatury.
+```
 char keys[ROWS][COLS] = {             //mapowanie klawiatury
   {'1','2','3','A'},
   {'4','5','6','B'},
   {'7','8','9','C'},
   {'*','0','#','D'}
 };
- 
+
 Keypad klawiatura = Keypad( makeKeymap(keys), rowPins, colPins, ROWS, COLS );     //inicjalizacja klawiatury
- 
+```
+## Krok 9
+Zadeklarowanie zmiennej ,,stanAlarmu”, ,, pinAlarmuPozycja”, ,,pinCyfra1”, pinCyfra2”, pinCyfra3”, pinCyfra4”, ,,ileCzasuMinelo” i przypisanie im odpowiednich 
+wartości.
+```
 volatile int stanAlarmu = 1;
 int pinAlarmuPozycja = 1;
 char pinCyfra1 = '1';
@@ -111,8 +138,14 @@ char pinCyfra3 = '3';
 char pinCyfra4 = '4';
  
 int ileCzasuMinelo = 0;
-
- 
+```
+## Krok 10
+Zdefiniowanie funkcji ,,setup()”. Funkcja zawiera:
+o	ustawienia na zegarze RTC  (Real-Time Clock), który został zainicjowany wcześniej jako obiekt „myRTC”, dane są przedstawione zgodnie z podanymi argumentami (sekundy/minuty/godzina/dzień/dzień/miesiąc/rok),
+o	ustawienia trybu pracy dla pinów cyfrowych w mikrokontrolerze jako wejścia bądź wyjścia,
+o	ustawione są także początkowe stany poszczególnych pinów,
+o	inicjowane są również dwa wyświetlacze LCD, a także moduł RFID oraz serwomechanizm.
+```
 void setup() {
   Wire.begin();
   Serial.begin(9600);
@@ -157,9 +190,10 @@ void setup() {
   lcd2.print("KARTE");
   delay(500);
 }
-
-// czytnik rfid////
-
+```
+## Krok 11
+Zdefiniowanie funkcji void RFID(), która obsługuje czytnik RFID. Funkcja ta sprawdza, czy nowa karta została zbliżona do czytnika. Jeśli tak, to zostaje odczytany jej unikalny identyfikator (UID) i porównuje go z zaprogramowanym w kodzie. Jeśli są zgodne, to zmienia stan alarmu na włączony, wyłącza dźwięk alarmu, włącza diody LED i umożliwia wejście na podstawie karty RFID. W przeciwnym wypadku wyświetla odpowiedni komunikat na wyświetlaczu LCD [15].
+```
  void RFID(){
    if ( ! mfrc522.PICC_IsNewCardPresent()){        // Szukaj nowych kart
       return;
@@ -201,18 +235,25 @@ void setup() {
   lcd2.print("KARTE");                                   
   }
 }
-
-
-
-/// czujka wibracji////
-
+```
+## Krok 12
+Zmienne dotyczące czujki wibracji 
+```
 long TP_init(){
   delay(10);
   long measurement=pulseIn (CZUJKA_WIBRACJI, HIGH);         //poczekaj, aż pin stanie się WYSOKI i zwróci pomiar
   return measurement;
 }
-//////////// moduł czasu rzeczywistego////////////
-
+```
+## Krok 13
+Zdefiniowanie funkcji ,, displayTime()” odnoszącej się do działa modułu czasu rzeczywistego. Krok po kroku, działanie funkcji wygląda następująco:
+o	Funkcja ,,updateTime” obiektu ,,myRTC” działa wykorzystuje do aktualizacji informacji o dacie i czasie pobranych ze źródła zegara RTC,
+o	Ustawiany jest kursor na pierwszą kolumnę dodatkowego wiersza ekranu LCD.
+o	Na ekranie wyświetlacza jest informacja ,,Data:” oraz dzień, miesiąc i rok pobrane z obiektu ,,myRTC”.
+o	Ustawiany jest kursor na pierwszą kolumnę drugiego wiersza ekranu LCD.
+o	Godzina, minuta i sekunda są pobierane z obiektu ,,myRTC” i sformatowane do postaci 00:00:00. Wynik jest zapisywany we wszystkich znakach o nazwie ,,timeChar”,
+o	Na wyświetlaczu wyświetlana jest informacja ,,Czas:” oraz sformatowana godzina, minuta i sekunda, a następnie wprowadzono ,,timeChar”.
+```
 void displayTime() {
    myRTC.updateTime();
  lcd1.setCursor(0,3);
@@ -227,8 +268,11 @@ void displayTime() {
  sprintf(timeChar, "Czas: %02d:%02d:%02d",myRTC.hours, myRTC.minutes, myRTC.seconds);
  lcd1.print(timeChar);                           
 }
+```
+## Krok 14
+Początek pętli głównej ,,loop()” która działa w nieskończonej pętli. W pierwszej kolejności wczytana jest funkcja ,,RFID()”, która została zdefiniowana wcześniej. Następnie wprowadzono rzeczywisty czas za pomocą funkcji displayTime(). Kolejny krokiem jest stworzenie zmiennej ,,klawisz”, do której przypisywana jest wartość zwrócona przez wykonanie ,,getKey()” z obiektu ,,klawiatura”. Dalej rozpoczyna się instrukcja ,,switch” która służy do podejmowania decyzji wyłącznie na podstawie wartości jednej zmiennej, podana w kodzie zmienna to ,,stanAlarmu”. Jeśli ,,stanAlarmu” ma wartość 1, wykonywana jest ,,case 1”. W tej sekcji sprawdzane są kolejne naciśnięcia klawiszy A, B, C, D na klawiaturze. Każdy z klawiszy określa strefę systemu, klawisz A załącza strefę pierwszą, B jest to strefa, C jest to trzecia strefa zaś D to strefa czwarta, która jest uruchomieniem wszystkich stref. Jeśli któryś z nich zostanie naciśnięty, dioda LED zapala się, a na wyświetlaczu pojawi się napis „uzbrojony” oraz „czuwanie”. Następnie ,,stanAlarmu” przypisywana jest wartość (2, 5 lub 6) i opóźnienie 10 sekund. Jeśli żaden z klawiszy nie zostanie naciśnięty, dioda LED nie zostanie zapalona, a na wyświetlaczu pojawi się napis „nie uzbrojony” oraz „czuwanie”. 
 
- 
+```
 void loop() {
   
    RFID();
@@ -287,7 +331,8 @@ void loop() {
       }
         
     break;
-    
+    ```
+
     case 2:
       //STREFA 1
       
