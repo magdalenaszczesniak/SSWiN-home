@@ -3,8 +3,6 @@ Opracowany projekt Systemu Sygnalizacji Włamania i Napadu z założenia zabezpi
 
 ![image](https://github.com/user-attachments/assets/2234121b-90b0-4a57-9d46-e135397f52d6)
 
-
-
 Krok po kroku kod działania Systemu Sygnalizacji Włamania i Napadu
 ## Krok 1 
 wczytanie bibliotek pomocniczych do działania programu 
